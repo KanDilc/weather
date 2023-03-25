@@ -241,24 +241,21 @@ function generateAutocompleteOptions(searchTerm) {
     "Krymsk",
   ];
 
-  // Фильтруем список вариантов по введенному поисковому запросу
-  const filteredOptions = options.filter((option) =>
-    option.toLowerCase().startsWith(searchTerm.toLowerCase())
-  );
+  const filteredOptions = options.filter(option => option.toLowerCase().startsWith(searchTerm.toLowerCase()));
 
   // Возвращаем HTML-код для списка вариантов
-  return filteredOptions.map((option) => `<li>${option}</li>`).join("");
+  return filteredOptions.map(option => `<div class="option">${option}</div>`).join("");
 }
 
 // Получаем ссылки на необходимые элементы
 const searchBar = document.querySelector(".search-bar");
-const autocompleteList = document.createElement("ul");
+const autocompleteList = document.createElement("div");
 
 // Добавляем список вариантов в DOM
 searchBar.after(autocompleteList);
 
 // Обработчик события для автодополнения при вводе текста в поле поиска
-searchBar.addEventListener("input", (event) => {
+searchBar.addEventListener("input", event => {
   // Получаем текущее значение текстового поля
   const searchTerm = event.target.value.trim();
 
@@ -269,24 +266,33 @@ searchBar.addEventListener("input", (event) => {
   if (searchTerm !== "") {
     const optionsHtml = generateAutocompleteOptions(searchTerm);
     autocompleteList.innerHTML = optionsHtml;
+    autocompleteList.style.display = "block";
+  } else {
+    autocompleteList.style.display = "none";
   }
 });
 
 // Обработчик события для выбора варианта автодополнения из списка
-autocompleteList.addEventListener("click", (event) => {
+autocompleteList.addEventListener("click", event => {
   // Если клик произошел на элементе списка, то заменяем значение текстового поля на выбранный вариант
-  if (event.target.tagName === "LI") {
+  if (event.target.classList.contains("option")) {
     searchBar.value = event.target.textContent;
-    autocompleteList.innerHTML = "";
+    autocompleteList.style.display = "none";
   }
 });
 
 // Обработчик события для скрытия списка вариантов при клике вне элементов поиска и списка
-document.addEventListener("click", (event) => {
-  if (
-    !searchBar.contains(event.target) &&
-    !autocompleteList.contains(event.target)
-  ) {
-    autocompleteList.innerHTML = "";
+document.addEventListener("click", event => {
+  if (!searchBar.contains(event.target) && !autocompleteList.contains(event.target)) {
+    autocompleteList.style.display = "none";
   }
 });
+
+// Располагаем список вариантов над полем ввода
+autocompleteList.style.position = "fixed";
+autocompleteList.style.top = "39%";
+autocompleteList.style.left = '40.5%';
+autocompleteList.style.background = "white";
+autocompleteList.style.color = "black";
+autocompleteList.style.width = "280px";
+autocompleteList.style.borderRadius = "5px";
